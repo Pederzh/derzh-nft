@@ -24,12 +24,13 @@ describe("DerzhNFT", function(){
     const derzhnft = await DerzhNFT.deploy();
     await derzhnft.deployed();
 
-    const recipient = '0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e'; //use public key. To create fake wallets use: npx hardhat node
+    const recipient = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'; //use public key. To create fake wallets use: npx hardhat node
     const metadataURI = 'cid/test.png';
 
     let balance = await derzhnft.balanceOf(recipient);
     expect(balance).to.equal(0);
-    const newlyMintedToken = await derzhnft.payToMint(recipient, metadataURI, { value: ethers.utils.parseEther('0.01')});
+    let minAmount = ethers.utils.parseEther('0.05');
+    const newlyMintedToken = await derzhnft.payToMint(recipient, metadataURI, { value: minAmount });
 
     //wait until the transaction is minted
     await newlyMintedToken.wait();
