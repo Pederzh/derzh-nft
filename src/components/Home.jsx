@@ -2,6 +2,10 @@ import {ethers} from "ethers";
 import WalletBalance from "./WalletBalance";
 import {useState, useEffect} from "react";
 import DerzhNFT from '../artifacts/contracts/DerzhNFT.sol/DerzhNFT.json'
+import {Card, Button, Row, Col, Layout, Typography, Divider} from 'antd';
+import {Content} from "antd/es/layout/layout";
+
+const {Title} = Typography;
 
 const contractAddress = '0x5fbdb2315678afecb367f032d93f642f64180aa3';
 const provider = new ethers.providers.Web3Provider(window.ethereum); //ethers creates a web3 provider
@@ -20,27 +24,29 @@ function Home(){
 
     const getCount = async () => {
         const count = await contract.count();
-        console.log(parseInt(count));
         setTotalMinted(parseInt(count));
     };
 
     return (
-        <div>
+        <Layout className="layout" style={{display: 'flex', justifyContent: 'center', textAlign: 'center', padding: 8}}>
+            <Title level={1}>ACN Eyes</Title>
             <WalletBalance />
-
-            <h1>Fired Guys NFT Collection</h1>
-            <div className="container">
-                <div className="row">
+            <Divider/>
+            <Title level={4}>NFT Collection</Title>
+            <Content style={{ padding: '0 50px', height: '100vh', display: 'flex', justifyContent: 'center', }}>
+            <div style={{maxWidth: 1600, minWidth: 800}}>
+                <Row gutter={16}>
                     {Array(totalMinted + 1)
                         .fill(0)
                         .map((_, i) => (
-                            <div key={i} className="col-sm">
+                            <Col key={i} span={8}>
                                 <NFTImage tokenId={i + 1} getCount={getCount} />
-                            </div>
+                            </Col>
                         ))}
-                </div>
+                </Row>
             </div>
-        </div>
+            </Content>
+        </Layout>
     );
 }
 
@@ -82,21 +88,28 @@ function NFTImage({ tokenId, getCount }) {
         alert(uri);
     }
     return (
-        <div className="card" style={{ width: '18rem' }}>
-            <img className="card-img-top" src={isMinted ? imageURI : 'img/placeholder.png'}></img>
-            <div className="card-body">
-                <h5 className="card-title">ID #{tokenId}</h5>
-                {!isMinted ? (
-                    <button className="btn btn-primary" onClick={mintToken}>
-                        Mint
-                    </button>
-                ) : (
-                    <button className="btn btn-secondary" onClick={getURI}>
-                        Taken! Show URI
-                    </button>
-                )}
-            </div>
-        </div>
+        <Card
+            hoverable
+            style={{maxWidth: 400}}
+            cover={<img className="card-img-top" src={isMinted ? imageURI : 'img/placeholder.png'}></img>}
+        >
+            <Card.Meta
+                title={`ID ${tokenId}`}
+                description={
+                <div>
+                    {!isMinted ? (
+                        <Button type="primary" onClick={mintToken}>
+                            Mint
+                        </Button>
+                    ) : (
+                        <Button onClick={getURI}>
+                            Taken! Show URI
+                        </Button>
+                    )}
+                </div>
+                }
+            />
+        </Card>
     );
 }
 
